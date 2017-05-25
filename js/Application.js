@@ -58,7 +58,7 @@ class Application {
 	}
 
 	initializeTextures(){
-		this._dudvMapTexture = new Texture("assets/textures/waterDUDVMap.png", this._program.id);
+		this._dudvMapTexture = new Texture("waterDUDVMap", this._program.id);
 	}
 
 	fireRenderLoop(){

@@ -1,10 +1,10 @@
 import {GL} from './GL'
 
-let  a = require("../assets/textures/waterDUDVMap.png");
+import loadTextureSrc from './TextureSources';
 
 class Texture {
 
-	constructor(textureSrc, programID){
+	constructor(textureID, programID){
 		this._programID = programID;
 		this._texture = GL.createTexture();
 		GL.bindTexture(GL.TEXTURE_2D, this._texture);
@@ -19,7 +19,7 @@ class Texture {
   			GL.generateMipmap(GL.TEXTURE_2D);
   			GL.bindTexture(GL.TEXTURE_2D, null);
 		}
-		textureImage.src = a;
+		textureImage.src = loadTextureSrc(textureID);
 	}
 
 	render(){
