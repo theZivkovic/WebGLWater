@@ -1,0 +1,20 @@
+{
+  "name": "water-rendering",
+  "description": "",
+  "main": "WaterRenderer.js",
+  "authors": [
+    "Dejan <dejan.zivkovic90@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "gl-matrix": "^2.3.2"
+  }
+}
