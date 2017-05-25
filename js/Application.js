@@ -39,19 +39,26 @@ class Application {
 	initializeMeshes() {
 		this._waterMesh = new Mesh(this._program.id);
 		this._waterMesh.setVertexBuffer([
-		    -10.0, 0.0, -10.0,
-		    10.0, 0.0, -10.0,
-		    10.0, 0.0, 10.0,
-		    -10.0, 0.0, 10.0
+		    -20.0, 0.0, -20.0,
+		    20.0, 0.0, -20.0,
+		    20.0, 0.0, 20.0,
+		    -20.0, 0.0, 20.0
 		]);
 
 		this._waterMesh.setIndexBuffer([
 			0, 1, 3, 1, 2, 3
 		]);
+
+		this._waterMesh.setUVBuffer([
+			0.0, 0.0,
+			1.0, 0.0,
+			1.0, 1.0,
+			0.0, 1.0
+		]);
 	}
 
 	initializeTextures(){
-		this._dudvMapTexture = new Texture("assets/textures/waterDUDVMap.png");
+		this._dudvMapTexture = new Texture("assets/textures/waterDUDVMap.png", this._program.id);
 	}
 
 	fireRenderLoop(){
@@ -60,7 +67,7 @@ class Application {
 		  GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
   		
 		  let perspectiveMatrix = GLMATRIX.mat4.create();
-		  GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 100.0);
+		  GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 200.0);
 		 
 		  var pUniform = GL.getUniformLocation(this._program.id, "uPMatrix");
 		  GL.uniformMatrix4fv(pUniform, false, perspectiveMatrix);
@@ -73,8 +80,8 @@ class Application {
 
 		  var mvUniform = GL.getUniformLocation(this._program.id, "uMVMatrix");
 		  GL.uniformMatrix4fv(mvUniform, false, mvMatrix);
-
-		  this._waterMesh.render(this._program.id);
+		  this._dudvMapTexture.render();
+		  this._waterMesh.render();
 		 
 		  requestAnimationFrame(render);
 		}

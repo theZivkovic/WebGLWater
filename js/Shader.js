@@ -9,7 +9,7 @@ class Shader {
 
 		if (!GL.getShaderParameter(this._shaderID, GL.COMPILE_STATUS)) {  
       		GL.deleteShader(this._shaderID);
-      		throw  'An error occurred compiling the shaders: ' + GL.getShaderInfoLog(this._shaderID) 
+      		throw  'An error occurred compiling the shader: ' + GL.getShaderInfoLog(this._shaderID) 
   		}
 	}
 

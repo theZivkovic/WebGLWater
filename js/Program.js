@@ -20,8 +20,6 @@ class Program {
 		}
 		
 		GL.useProgram(this._programID);
-		let vertexPositionAttribute = GL.getAttribLocation(this._programID, 'aVertexPosition');
-		GL.enableVertexAttribArray(vertexPositionAttribute);
 	}
 
 	get id(){
