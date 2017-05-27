@@ -4,13 +4,15 @@ import loadTextureSrc from './TextureSources';
 
 class Texture {
 
-	constructor(textureID, programID){
+	constructor(textureSrcID, programID, textureUnit){
+		this._textureSrcID = textureSrcID;
 		this._programID = programID;
+		this._textureUnit = textureUnit;
 		this._texture = GL.createTexture();
 		GL.bindTexture(GL.TEXTURE_2D, this._texture);
 		GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, 1, 1, 0, GL.RGBA, GL.UNSIGNED_BYTE, new Uint8Array([255, 255, 0, 255])); // small texture
-
 		let textureImage = new Image();
+		
 		textureImage.onload = () => {
 			GL.bindTexture(GL.TEXTURE_2D, this._texture);
 			GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, textureImage);
@@ -19,13 +21,13 @@ class Texture {
   			GL.generateMipmap(GL.TEXTURE_2D);
   			GL.bindTexture(GL.TEXTURE_2D, null);
 		}
-		textureImage.src = loadTextureSrc(textureID);
+		textureImage.src = loadTextureSrc(textureSrcID);
 	}
 
 	render(){
-		GL.activeTexture(GL.TEXTURE0);
+		GL.activeTexture(GL.TEXTURE0 + this._textureUnit);
 		GL.bindTexture(GL.TEXTURE_2D, this._texture);
-		GL.uniform1i(GL.getUniformLocation(this._programID, 'uSampler'), 0);
+		GL.uniform1i(GL.getUniformLocation(this._programID, this._textureSrcID), this._textureUnit);
 	}
 
 }

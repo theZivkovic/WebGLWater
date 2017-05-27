@@ -1,4 +1,5 @@
 import {GL} from './GL'
+import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 
 class Mesh {
 
@@ -7,11 +8,14 @@ class Mesh {
 		this._vertexBuffer = null;
 		this._indexBuffer = null;
 		this._uvBuffer = null;
+		this._modelTransform = GLMATRIX.mat4.create();
+		console.log();
 
 		this._vertexPositionAttribute = GL.getAttribLocation(this._programID, 'aVertexPosition');
 		GL.enableVertexAttribArray(this._vertexPositionAttribute);
 		this._uvPositionAttribute = GL.getAttribLocation(this._programID, 'aTextureCoord');
 		GL.enableVertexAttribArray(this._uvPositionAttribute);
+		this._modelTransformUniformLoc = GL.getUniformLocation(this._programID, 'M');
 	}
 
 	setVertexBuffer(verticesArray){
@@ -35,15 +39,18 @@ class Mesh {
 		GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(uvArray), GL.STATIC_DRAW);
 	}
 
-	render(){
+	setModelTransform(some4x4Matrix) {
+		this._modelTransform = some4x4Matrix;
+	}
+
+	render() {
+		GL.uniformMatrix4fv(this._modelTransformUniformLoc, false, new Float32Array(this._modelTransform));
 		GL.bindBuffer(GL.ARRAY_BUFFER, this._vertexBuffer);
 		GL.vertexAttribPointer(this._vertexPositionAttribute, 3, GL.FLOAT, false, 0, 0);
 		GL.bindBuffer(GL.ARRAY_BUFFER, this._uvBuffer);
 		GL.vertexAttribPointer(this._uvPositionAttribute, 2, GL.FLOAT, false, 0, 0);
-
-		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
-		
-		GL.drawElements(GL.TRIANGLES, 6, GL.UNSIGNED_SHORT, 0);
+		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this._indexBuffer);		
+		GL.drawElements(GL.TRIANGLES, this._indexArray.length, GL.UNSIGNED_SHORT, 0);
 	}
 
 
