@@ -3,9 +3,9 @@ import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 
 class PlaneMesh {
 
-	constructor(position, planeVector, planeNormal, planeSize, programID){
+	constructor(position, planeVector, planeNormal, planeSize){
 		
-		this._mesh = new Mesh(programID);
+		this._mesh = new Mesh();
 		this._mesh.setVertexBuffer([
 		    -planeSize, 0.0, -planeSize,
 		    +planeSize, 0.0, -planeSize,

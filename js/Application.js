@@ -10,7 +10,7 @@ class Application {
 	constructor(renderCanvas){
 		console.log("Application started!");
 		this._renderCanvas = renderCanvas;
-		this._program = null;
+		this._firstPassProgram = null;
 		this._secondPassProgram = null;
 		this._poolSides = [];
 		this._dudvMapTexture = null;
@@ -43,35 +43,32 @@ class Application {
 	}
 
 	initializePrograms() {
-		this._program = new Program();
-		this._program.addShaderDuo('default');
+		this._firstPassProgram = new Program();
+		this._firstPassProgram.addShaderDuo('default');
 
 		this._secondPassProgram = new Program();
 		this._secondPassProgram.addShaderDuo('secondPass');
 	}
 
 	initializeMeshes() {
-		
-		// UP
-		//this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,30,0), GLMATRIX.vec3.fromValues(1, 0, 0), GLMATRIX.vec3.fromValues(0,-1,0), 30.0, this._program.id).mesh);
 		// DOWN
-		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,-30,0), GLMATRIX.vec3.fromValues(1, 0, 0), GLMATRIX.vec3.fromValues(0,1,0), 30.0, this._program.id).mesh);
+		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,-30,0), GLMATRIX.vec3.fromValues(1, 0, 0), GLMATRIX.vec3.fromValues(0,1,0), 30.0).mesh);
 		// RIGHT
-		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(30,0,0), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(-1,0,0), 30.0, this._program.id).mesh);
+		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(30,0,0), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(-1,0,0), 30.0).mesh);
 		// LEFT
-		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(-30,0,0), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(1,0,0), 30.0, this._program.id).mesh);
+		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(-30,0,0), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(1,0,0), 30.0).mesh);
 		// FRONT
-		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,30), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(0,0,-1), 30.0, this._program.id).mesh);
+		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,30), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(0,0,-1), 30.0).mesh);
 		// REAR
-		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,-30), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(0,0,1), 30.0, this._program.id).mesh);
+		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,-30), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(0,0,1), 30.0).mesh);
 
-		this._secondPassRenderPlane = new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,0), GLMATRIX.vec3.fromValues(1, 0, 0), GLMATRIX.vec3.fromValues(0,1,0), 30.0, this._secondPassProgram.id).mesh;
+		this._secondPassRenderPlane = new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,0), GLMATRIX.vec3.fromValues(1, 0, 0), GLMATRIX.vec3.fromValues(0,1,0), 30.0).mesh;
 
 	}
 
 	initializeTextures(){
-		this._dudvMapTexture = new Texture("waterDUDVMap", this._program.id, 0);
-		this._mainTexture = new Texture("whiteTiles", this._program.id, 1);
+		this._dudvMapTexture = new Texture("waterDUDVMap", 0);
+		this._mainTexture = new Texture("whiteTiles", 1);
 	}
 
 	initializeTextureFramebuffer() {
@@ -101,14 +98,14 @@ class Application {
     	GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 	}
 
-	renderFirstPass() {
+	renderFirstPass(programID) {
 
 		  GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		  
 		  let perspectiveMatrix = GLMATRIX.mat4.create();
 		  GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 200.0);
 		 
-		  var pUniform = GL.getUniformLocation(this._program.id, "uPMatrix");
+		  var pUniform = GL.getUniformLocation(programID, "uPMatrix");
 		  GL.uniformMatrix4fv(pUniform, false, perspectiveMatrix);
 
 		  let mvMatrix = GLMATRIX.mat4.create();
@@ -117,17 +114,17 @@ class Application {
 		  let up = GLMATRIX.vec3.fromValues(0,1,0);
 		  GLMATRIX.mat4.lookAt(mvMatrix, eye, target, up);
 
-		  var mvUniform = GL.getUniformLocation(this._program.id, "uMVMatrix");
+		  var mvUniform = GL.getUniformLocation(programID, "uMVMatrix");
 		  GL.uniformMatrix4fv(mvUniform, false, mvMatrix);
 
 		  this._moveFactor += 0.0005;
 		  this._moveFactor %= 1.0;
-		  var moveFactorUniform = GL.getUniformLocation(this._program.id, "moveFactor");
+		  var moveFactorUniform = GL.getUniformLocation(programID, "moveFactor");
 		  GL.uniform1f(moveFactorUniform, this._moveFactor)
 
-		  this._dudvMapTexture.render();
-		  this._mainTexture.render();
-		  this._poolSides.forEach(poolSide => poolSide.render());
+		  this._dudvMapTexture.render(programID);
+		  this._mainTexture.render(programID);
+		  this._poolSides.forEach(poolSide => poolSide.render(programID));
 	}
 
 	fireRenderLoop(){
@@ -135,9 +132,9 @@ class Application {
 		let render = () => {
 			this._cameraGroundAngle += 0.01;
 			
-			GL.useProgram(this._program.id);
+			GL.useProgram(this._firstPassProgram.id);
 			GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
-			this.renderFirstPass();
+			this.renderFirstPass(this._firstPassProgram.id);
 			GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 
 			GL.useProgram(this._secondPassProgram.id);
@@ -161,7 +158,7 @@ class Application {
 		  	var mvUniform = GL.getUniformLocation(this._secondPassProgram.id, "uMVMatrix");
 		  	GL.uniformMatrix4fv(mvUniform, false, mvMatrix);
 
-			this._secondPassRenderPlane.render();
+			this._secondPassRenderPlane.render(this._secondPassProgram.id);
 		  	requestAnimationFrame(render);
 		}
 		requestAnimationFrame(render);

@@ -19,6 +19,11 @@ class Program {
 		if (!GL.getProgramParameter(this._programID, GL.LINK_STATUS)) {
 		 	throw 'Unable to initialize the shader program: ' + GL.getProgramInfoLog(this._programID);
 		}
+
+		let vertexPositionAttribute = GL.getAttribLocation(this._programID, 'aVertexPosition');
+		GL.enableVertexAttribArray(vertexPositionAttribute);
+		let uvPositionAttribute = GL.getAttribLocation(this._programID, 'aTextureCoord');
+		GL.enableVertexAttribArray(uvPositionAttribute);
 		
 		GL.useProgram(this._programID);
 	}

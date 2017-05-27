@@ -4,9 +4,8 @@ import loadTextureSrc from './TextureSources';
 
 class Texture {
 
-	constructor(textureSrcID, programID, textureUnit){
+	constructor(textureSrcID, textureUnit){
 		this._textureSrcID = textureSrcID;
-		this._programID = programID;
 		this._textureUnit = textureUnit;
 		this._texture = GL.createTexture();
 		GL.bindTexture(GL.TEXTURE_2D, this._texture);
@@ -24,10 +23,10 @@ class Texture {
 		textureImage.src = loadTextureSrc(textureSrcID);
 	}
 
-	render(){
+	render(programID){
 		GL.activeTexture(GL.TEXTURE0 + this._textureUnit);
 		GL.bindTexture(GL.TEXTURE_2D, this._texture);
-		GL.uniform1i(GL.getUniformLocation(this._programID, this._textureSrcID), this._textureUnit);
+		GL.uniform1i(GL.getUniformLocation(programID, this._textureSrcID), this._textureUnit);
 	}
 
 }
