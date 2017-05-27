@@ -11,17 +11,22 @@ class Application {
 		console.log("Application started!");
 		this._renderCanvas = renderCanvas;
 		this._program = null;
+		this._secondPassProgram = null;
 		this._poolSides = [];
 		this._dudvMapTexture = null;
 		this._mainTexture = null;
 		this._moveFactor = 0;
+		this._firstPassFramebuffer = null;
+		this._secondPassRenderPlane = null;
+		this._firstPassRenderTexture = null;
+		this._cameraGroundAngle = 0.0;
 		this.initialize();
 	}
 
 	initialize() {
 		initializeWebGL(this._renderCanvas);
 		this.initializeRenderingBits();
-		this.initializeProgram();
+		this.initializePrograms();
 		this.initializeMeshes();
 		this.initializeTextureFramebuffer();
 		this.initializeTextures();
@@ -37,9 +42,12 @@ class Application {
 		GL.cullFace(GL.FRONT);
 	}
 
-	initializeProgram() {
+	initializePrograms() {
 		this._program = new Program();
 		this._program.addShaderDuo('default');
+
+		this._secondPassProgram = new Program();
+		this._secondPassProgram.addShaderDuo('secondPass');
 	}
 
 	initializeMeshes() {
@@ -57,6 +65,8 @@ class Application {
 		// REAR
 		this._poolSides.push(new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,-30), GLMATRIX.vec3.fromValues(0, 1, 0), GLMATRIX.vec3.fromValues(0,0,1), 30.0, this._program.id).mesh);
 
+		this._secondPassRenderPlane = new PlaneMesh(GLMATRIX.vec3.fromValues(0,0,0), GLMATRIX.vec3.fromValues(1, 0, 0), GLMATRIX.vec3.fromValues(0,1,0), 30.0, this._secondPassProgram.id).mesh;
+
 	}
 
 	initializeTextures(){
@@ -64,13 +74,34 @@ class Application {
 		this._mainTexture = new Texture("whiteTiles", this._program.id, 1);
 	}
 
-	initializeTextureFramebuffer(){
-		
+	initializeTextureFramebuffer() {
+
+		this._firstPassFramebuffer = GL.createFramebuffer();
+		GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
+		this._firstPassFramebuffer.width = 512;
+		this._firstPassFramebuffer.height = 512;
+
+		this._firstPassRenderTexture = GL.createTexture();
+		GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
+		GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, this._firstPassFramebuffer.width, this._firstPassFramebuffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
+    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+
+		let depthBuffer = GL.createRenderbuffer();
+		GL.bindRenderbuffer(GL.RENDERBUFFER, depthBuffer);
+		GL.renderbufferStorage(GL.RENDERBUFFER, GL.DEPTH_COMPONENT16, this._firstPassFramebuffer.width, this._firstPassFramebuffer.height);
+
+		GL.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, this._firstPassRenderTexture, 0);
+		GL.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, depthBuffer);
+
+		GL.bindTexture(GL.TEXTURE_2D, null);
+    	GL.bindRenderbuffer(GL.RENDERBUFFER, null);
+    	GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 	}
 
-	fireRenderLoop(){
-
-		let render = () => {
+	renderFirstPass() {
 
 		  GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		  
@@ -81,7 +112,7 @@ class Application {
 		  GL.uniformMatrix4fv(pUniform, false, perspectiveMatrix);
 
 		  let mvMatrix = GLMATRIX.mat4.create();
-		  let eye = GLMATRIX.vec3.fromValues(50,50,50);
+		  let eye = GLMATRIX.vec3.fromValues(50 * Math.cos(this._cameraGroundAngle), -50, 50 * Math.sin(this._cameraGroundAngle));
 		  let target = GLMATRIX.vec3.fromValues(0,0,0);
 		  let up = GLMATRIX.vec3.fromValues(0,1,0);
 		  GLMATRIX.mat4.lookAt(mvMatrix, eye, target, up);
@@ -97,8 +128,41 @@ class Application {
 		  this._dudvMapTexture.render();
 		  this._mainTexture.render();
 		  this._poolSides.forEach(poolSide => poolSide.render());
+	}
+
+	fireRenderLoop(){
+
+		let render = () => {
+			this._cameraGroundAngle += 0.01;
+			
+			GL.useProgram(this._program.id);
+			GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
+			this.renderFirstPass();
+			GL.bindFramebuffer(GL.FRAMEBUFFER, null);
+
+			GL.useProgram(this._secondPassProgram.id);
+			GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+			GL.activeTexture(GL.TEXTURE0);
+			GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
+			GL.uniform1i(GL.getUniformLocation(this._secondPassProgram.id, "firstPassTexture"), 0);
+
+			let perspectiveMatrix = GLMATRIX.mat4.create();
+		  	GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 200.0);
 		 
-		  requestAnimationFrame(render);
+		  	var pUniform = GL.getUniformLocation(this._secondPassProgram.id, "uPMatrix");
+		  	GL.uniformMatrix4fv(pUniform, false, perspectiveMatrix);
+
+			let mvMatrix = GLMATRIX.mat4.create();
+			let eye = GLMATRIX.vec3.fromValues(50 * Math.cos(this._cameraGroundAngle), 50, 50 * Math.sin(this._cameraGroundAngle));
+			let target = GLMATRIX.vec3.fromValues(0,0,0);
+			let up = GLMATRIX.vec3.fromValues(0,1,0);
+			GLMATRIX.mat4.lookAt(mvMatrix, eye, target, up);
+
+		  	var mvUniform = GL.getUniformLocation(this._secondPassProgram.id, "uMVMatrix");
+		  	GL.uniformMatrix4fv(mvUniform, false, mvMatrix);
+
+			this._secondPassRenderPlane.render();
+		  	requestAnimationFrame(render);
 		}
 		requestAnimationFrame(render);
 	}

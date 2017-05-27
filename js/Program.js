@@ -9,6 +9,7 @@ class Program {
 	}
 
 	addShaderDuo(shaderID) {
+		
 		let vertexShader = new Shader(loadShaderSource(shaderID, 'vertex'), GL.VERTEX_SHADER);
 		let fragmentShader = new Shader(loadShaderSource(shaderID, 'fragment'), GL.FRAGMENT_SHADER);
 		GL.attachShader(this._programID, vertexShader.id);
