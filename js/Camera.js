@@ -3,13 +3,14 @@ import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 
 class Camera {
 	
-	constructor(position, forward, up) {
-		this._position = position
-		this._forward = forward;
-		this._up = up;
+	constructor(phi, theta, radius){
+		this._phi = phi;
+		this._theta = theta;
+		this._radius = radius;
 
+		this._mouseDownPhi = null;
+		this._mouseDownTheta = null;
 		this._mouseDownPosition = null;
-		this._renderCanvas = null;
 	}
 
 	setSourceOfInteraction(renderCanvas){
@@ -22,8 +23,8 @@ class Camera {
 
 	onMouseDown(event){
 		this._mouseDownPosition = {x: event.clientX, y: event.clientY };
-		this._mouseDownForward = GLMATRIX.vec3.clone(this._forward);
-		this._mouseDownUp = GLMATRIX.vec3.clone(this._up);
+		this._mouseDownPhi = this._phi;
+		this._mouseDownTheta = this._theta;
 	}	
 
 	onMouseUp(event){
@@ -38,43 +39,50 @@ class Camera {
 			let nDeltaX = deltaX / this._renderCanvas.clientWidth;
 			let nDeltaY = deltaY / this._renderCanvas.clientHeight;
 
-			let rotationAroundUp = GLMATRIX.mat4.create();
-			let rotationAngleForForward = nDeltaX * Math.PI / 2.0;
-			GLMATRIX.mat4.fromRotation(rotationAroundUp, rotationAngleForForward, this._up);
-			GLMATRIX.vec3.transformMat4(this._forward, this._mouseDownForward, rotationAroundUp);
-
-			let rotationAroundRight = GLMATRIX.mat4.create();
-			let rotationAngleForUp = nDeltaY * Math.PI / 2.0;
-			let rightVec = this.calculateRight();
-			GLMATRIX.mat4.fromRotation(rotationAroundRight, rotationAngleForUp, rightVec);
-			GLMATRIX.vec3.transformMat4(this._up, this._mouseDownUp, rotationAroundRight);
-			GLMATRIX.vec3.cross(this._forward, this._up, rightVec);
+			this._phi = this._mouseDownPhi + nDeltaX;
+			this._theta = this._mouseDownTheta + nDeltaY;
+			this.clampTheta();
 		}
+	}
+
+	invertTheta(){
+		this._theta = -this._theta;
+	}
+
+	clampTheta(){
+		if (this._theta > Math.PI / 2.0 - Math.PI / 12.0)
+			this._theta = Math.PI / 2.0 - Math.PI / 12.0;
+		if (this._theta < -Math.PI / 2.0 + Math.PI / 12.0)
+			this._theta = -Math.PI / 2.0 + Math.PI / 12.0;
+	}
+
+	clampRadius(){
+		if (this._radius < 0) this._radius = 0;
 	}
 
 	onKeyDown(event){
 		if (event.keyCode == '38'){ // up
-			GLMATRIX.vec3.add(this._position, this._position, this._forward);
+			this._radius -= 1.0;
+			this.clampRadius();
 		} 
 		else if (event.keyCode == '40'){ // down
-			let backVec = GLMATRIX.vec3.create();
-			GLMATRIX.vec3.negate(backVec, this._forward);
-			GLMATRIX.vec3.add(this._position, this._position, backVec);
+			this._radius += 1.0;
 		}
 	}
 
-	calculateRight() {
-		let rightVec = GLMATRIX.vec3.create();
-		GLMATRIX.vec3.cross(rightVec, this._forward, this._up );
-		GLMATRIX.vec3.normalize(rightVec, rightVec);
-		return rightVec;
+	calculatePosition() {
+		let position = GLMATRIX.vec3.fromValues(
+			this._radius * Math.cos(this._phi) * Math.cos(this._theta),
+			this._radius * Math.sin(this._theta),
+			this._radius * Math.sin(this._phi) * Math.cos(this._theta)
+		);
+		return position;
 	}
 
 	render(programID) {
 		let viewMatrix = GLMATRIX.mat4.create();
-		let target = GLMATRIX.vec3.create();
-		GLMATRIX.vec3.add(target, this._position, this._forward);
-		GLMATRIX.mat4.lookAt(viewMatrix, this._position, target, this._up);
+
+		GLMATRIX.mat4.lookAt(viewMatrix, this.calculatePosition(), GLMATRIX.vec3.create(), GLMATRIX.vec3.fromValues(0,1,0));
 
 		var viewMatUniform = GL.getUniformLocation(programID, "V");
 		GL.uniformMatrix4fv(viewMatUniform, false, viewMatrix);

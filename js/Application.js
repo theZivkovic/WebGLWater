@@ -102,11 +102,7 @@ class Application {
 	}
 
 	initializeCamera() {
-		this._camera = new Camera(GLMATRIX.vec3.fromValues(50, 50, 50),
-								  GLMATRIX.vec3.fromValues(-1, -1, -1),
-								  GLMATRIX.vec3.fromValues(0, 1, 0));
-
-		this._camera.setForward(GLMATRIX.vec3.fromValues(-1, -1, -1));
+		this._camera = new Camera(0, 0, 100);
 		this._camera.setSourceOfInteraction(this._renderCanvas);
 	}
 
@@ -114,6 +110,7 @@ class Application {
 
 		  GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		  
+		  this._camera.invertTheta();
 		  this._camera.render(programID);
 
 		  this._moveFactor += 0.0005;
@@ -142,10 +139,10 @@ class Application {
 			GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
 			GL.uniform1i(GL.getUniformLocation(this._secondPassProgram.id, "firstPassTexture"), 0);
 
-			// this._camera.setPosition(GLMATRIX.vec3.fromValues(50, 50, 50));
-		 //  	this._camera.setForward(GLMATRIX.vec3.fromValues(-1, -1, -1));
+			this._camera.invertTheta();
 			this._camera.render(this._secondPassProgram.id);
 			this._secondPassRenderPlane.render(this._secondPassProgram.id);
+		  	
 		  	requestAnimationFrame(render);
 		}
 		requestAnimationFrame(render);
