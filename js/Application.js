@@ -4,12 +4,14 @@ import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 import {GL, initializeWebGL} from './GL';
 import Texture from './Texture';
 import PlaneMesh from './PlaneMesh';
+import Camera from './Camera';
 
 class Application {
 
 	constructor(renderCanvas){
 		console.log("Application started!");
 		this._renderCanvas = renderCanvas;
+		this._camera = null;
 		this._firstPassProgram = null;
 		this._secondPassProgram = null;
 		this._poolSides = [];
@@ -30,6 +32,7 @@ class Application {
 		this.initializeMeshes();
 		this.initializeTextureFramebuffer();
 		this.initializeTextures();
+		this.initializeCamera();
 		this.fireRenderLoop();
 	}
 
@@ -98,24 +101,20 @@ class Application {
     	GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 	}
 
+	initializeCamera() {
+		this._camera = new Camera(GLMATRIX.vec3.fromValues(50, 50, 50),
+								  GLMATRIX.vec3.fromValues(-1, -1, -1),
+								  GLMATRIX.vec3.fromValues(0, 1, 0));
+
+		this._camera.setForward(GLMATRIX.vec3.fromValues(-1, -1, -1));
+		this._camera.setSourceOfInteraction(this._renderCanvas);
+	}
+
 	renderFirstPass(programID) {
 
 		  GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 		  
-		  let perspectiveMatrix = GLMATRIX.mat4.create();
-		  GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 200.0);
-		 
-		  var pUniform = GL.getUniformLocation(programID, "uPMatrix");
-		  GL.uniformMatrix4fv(pUniform, false, perspectiveMatrix);
-
-		  let mvMatrix = GLMATRIX.mat4.create();
-		  let eye = GLMATRIX.vec3.fromValues(50 * Math.cos(this._cameraGroundAngle), -50, 50 * Math.sin(this._cameraGroundAngle));
-		  let target = GLMATRIX.vec3.fromValues(0,0,0);
-		  let up = GLMATRIX.vec3.fromValues(0,1,0);
-		  GLMATRIX.mat4.lookAt(mvMatrix, eye, target, up);
-
-		  var mvUniform = GL.getUniformLocation(programID, "uMVMatrix");
-		  GL.uniformMatrix4fv(mvUniform, false, mvMatrix);
+		  this._camera.render(programID);
 
 		  this._moveFactor += 0.0005;
 		  this._moveFactor %= 1.0;
@@ -143,21 +142,9 @@ class Application {
 			GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
 			GL.uniform1i(GL.getUniformLocation(this._secondPassProgram.id, "firstPassTexture"), 0);
 
-			let perspectiveMatrix = GLMATRIX.mat4.create();
-		  	GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 200.0);
-		 
-		  	var pUniform = GL.getUniformLocation(this._secondPassProgram.id, "uPMatrix");
-		  	GL.uniformMatrix4fv(pUniform, false, perspectiveMatrix);
-
-			let mvMatrix = GLMATRIX.mat4.create();
-			let eye = GLMATRIX.vec3.fromValues(50 * Math.cos(this._cameraGroundAngle), 50, 50 * Math.sin(this._cameraGroundAngle));
-			let target = GLMATRIX.vec3.fromValues(0,0,0);
-			let up = GLMATRIX.vec3.fromValues(0,1,0);
-			GLMATRIX.mat4.lookAt(mvMatrix, eye, target, up);
-
-		  	var mvUniform = GL.getUniformLocation(this._secondPassProgram.id, "uMVMatrix");
-		  	GL.uniformMatrix4fv(mvUniform, false, mvMatrix);
-
+			// this._camera.setPosition(GLMATRIX.vec3.fromValues(50, 50, 50));
+		 //  	this._camera.setForward(GLMATRIX.vec3.fromValues(-1, -1, -1));
+			this._camera.render(this._secondPassProgram.id);
 			this._secondPassRenderPlane.render(this._secondPassProgram.id);
 		  	requestAnimationFrame(render);
 		}
