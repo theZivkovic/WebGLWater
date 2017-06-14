@@ -5,6 +5,7 @@ import {GL, initializeWebGL} from './GL';
 import Texture from './Texture';
 import PlaneMesh from './PlaneMesh';
 import Camera from './Camera';
+import EnvironmentRenderer from './EnvironmentRenderer';
 
 class Application {
 
@@ -28,11 +29,12 @@ class Application {
 	initialize() {
 		initializeWebGL(this._renderCanvas);
 		this.initializeRenderingBits();
-		this.initializePrograms();
-		this.initializeMeshes();
-		this.initializeTextureFramebuffer();
-		this.initializeTextures();
+		//this.initializePrograms();
+		//this.initializeMeshes();
+		//this.initializeTextureFramebuffer();
+		//this.initializeTextures();
 		this.initializeCamera();
+		this.envrend = new EnvironmentRenderer();
 		this.fireRenderLoop();
 	}
 
@@ -126,22 +128,26 @@ class Application {
 	fireRenderLoop(){
 
 		let render = () => {
-			this._cameraGroundAngle += 0.01;
+
+			 GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+			 this.envrend.preRender(this._camera);
+			 this.envrend.render();
+			// this._cameraGroundAngle += 0.01;
 			
-			GL.useProgram(this._firstPassProgram.id);
-			GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
-			this.renderFirstPass(this._firstPassProgram.id);
-			GL.bindFramebuffer(GL.FRAMEBUFFER, null);
+			// GL.useProgram(this._firstPassProgram.id);
+			// GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
+			// this.renderFirstPass(this._firstPassProgram.id);
+			// GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 
-			GL.useProgram(this._secondPassProgram.id);
-			GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-			GL.activeTexture(GL.TEXTURE0);
-			GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
-			GL.uniform1i(GL.getUniformLocation(this._secondPassProgram.id, "firstPassTexture"), 0);
+			// GL.useProgram(this._secondPassProgram.id);
+			// GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+			// GL.activeTexture(GL.TEXTURE0);
+			// GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
+			// GL.uniform1i(GL.getUniformLocation(this._secondPassProgram.id, "firstPassTexture"), 0);
 
-			this._camera.invertTheta();
-			this._camera.render(this._secondPassProgram.id);
-			this._secondPassRenderPlane.render(this._secondPassProgram.id);
+			// this._camera.invertTheta();
+			// this._camera.render(this._secondPassProgram.id);
+			// this._secondPassRenderPlane.render(this._secondPassProgram.id);
 		  	
 		  	requestAnimationFrame(render);
 		}

@@ -19,13 +19,23 @@ class Program {
 		if (!GL.getProgramParameter(this._programID, GL.LINK_STATUS)) {
 		 	throw 'Unable to initialize the shader program: ' + GL.getProgramInfoLog(this._programID);
 		}
-
-		let vertexPositionAttribute = GL.getAttribLocation(this._programID, 'aVertexPosition');
-		GL.enableVertexAttribArray(vertexPositionAttribute);
-		let uvPositionAttribute = GL.getAttribLocation(this._programID, 'aTextureCoord');
-		GL.enableVertexAttribArray(uvPositionAttribute);
 		
 		GL.useProgram(this._programID);
+	}
+
+	enableVertexPositionAttribute() {
+		let vertexPositionAttribute = GL.getAttribLocation(this._programID, 'aVertexPosition');
+		GL.enableVertexAttribArray(vertexPositionAttribute);
+	}
+
+	enableTextureCoordAttribute() {
+		let uvPositionAttribute = GL.getAttribLocation(this._programID, 'aTextureCoord');
+		GL.enableVertexAttribArray(uvPositionAttribute);
+	}
+
+	enableVertexColorAttribute() {
+		let vertexColorAttribute = GL.getAttribLocation(this._programID, 'aVertexColor');
+		GL.enableVertexAttribArray(vertexColorAttribute);
 	}
 
 	get id(){
