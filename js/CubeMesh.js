@@ -1,12 +1,12 @@
 import Mesh from './Mesh';
 import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 
-class CubeMesh {
+class CubeMesh extends Mesh {
 
 	constructor(position, cubeHalfWidth){
 		
-		this._mesh = new Mesh();
-		this._mesh.setVertexBuffer([
+		super();
+		this.setVertexBuffer([
 		     // front
 		    -cubeHalfWidth, -cubeHalfWidth,  cubeHalfWidth,
 		     cubeHalfWidth, -cubeHalfWidth,  cubeHalfWidth,
@@ -19,7 +19,7 @@ class CubeMesh {
 		    -cubeHalfWidth,  cubeHalfWidth, -cubeHalfWidth
 		]);
 
-		this._mesh.setIndexBuffer([
+		this.setIndexBuffer([
 			// front
 			0, 1, 2,
 			2, 3, 0,
@@ -40,11 +40,9 @@ class CubeMesh {
 			6, 7, 3
 		]);
 
-		this._mesh.setModelTransform(GLMATRIX.mat4.create());
-	}
-
-	get mesh() {
-		return this._mesh;
+		let translationMatrix = GLMATRIX.mat4.create();
+		GLMATRIX.mat4.translate(translationMatrix, translationMatrix, position);
+		this.setModelTransform(translationMatrix);
 	}
 }
 
