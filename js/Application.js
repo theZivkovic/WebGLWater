@@ -6,6 +6,7 @@ import Texture from './Texture';
 import PlaneMesh from './PlaneMesh';
 import Camera from './Camera';
 import EnvironmentRenderer from './EnvironmentRenderer';
+import SkyboxRenderer from './SkyboxRenderer';
 
 class Application {
 
@@ -34,7 +35,9 @@ class Application {
 		//this.initializeTextureFramebuffer();
 		//this.initializeTextures();
 		this.initializeCamera();
-		this.envrend = new EnvironmentRenderer();
+		this._environmentRenderer = new EnvironmentRenderer();
+		this._skyboxRenderer = new SkyboxRenderer();
+
 		this.fireRenderLoop();
 	}
 
@@ -130,8 +133,11 @@ class Application {
 		let render = () => {
 
 			 GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-			 this.envrend.preRender(this._camera);
-			 this.envrend.render();
+			 this._environmentRenderer.preRender(this._camera);
+			 this._environmentRenderer.render();
+			 this._skyboxRenderer.preRender(this._camera);
+			 this._skyboxRenderer.render();
+			 
 			// this._cameraGroundAngle += 0.01;
 			
 			// GL.useProgram(this._firstPassProgram.id);

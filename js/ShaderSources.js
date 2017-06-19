@@ -5,6 +5,8 @@ shaderSources.secondPassVertexSource = require('../assets/shaders/secondPassVSH.
 shaderSources.secondPassFragmentSource = require('../assets/shaders/secondPassFSH.glsl');
 shaderSources.environmentShaderVertexSource = require('../assets/shaders/environmentShaderVSH.glsl');
 shaderSources.environmentShaderFragmentSource = require('../assets/shaders/environmentShaderFSH.glsl');
+shaderSources.skyboxShaderVertexSource = require('../assets/shaders/skyboxShaderVSH.glsl');
+shaderSources.skyboxShaderFragmentSource = require('../assets/shaders/skyboxShaderFSH.glsl');
 
 let capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);

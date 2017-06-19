@@ -1,6 +1,6 @@
 import {GL} from './GL'
 
-import loadTextureSrc from './TextureSources';
+import {loadTextureSrc} from './TextureSources';
 
 class Texture {
 

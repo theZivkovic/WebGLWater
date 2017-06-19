@@ -30,6 +30,7 @@ class EnvironmentRenderer extends Program {
 	}
 
 	preRender(camera) {
+		GL.useProgram(this.id);
 		camera.render(this.id);
 	}
 

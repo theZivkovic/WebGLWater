@@ -88,7 +88,7 @@ class Camera {
 		GL.uniformMatrix4fv(viewMatUniform, false, viewMatrix);
 
 		let perspectiveMatrix = GLMATRIX.mat4.create();
-		GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 200.0);
+		GLMATRIX.mat4.perspective(perspectiveMatrix, 45, 4 / 3.0, 0.1, 1000.0);
 
 		var perspectiveMatUniform = GL.getUniformLocation(programID, "P");
 	  	GL.uniformMatrix4fv(perspectiveMatUniform, false, perspectiveMatrix);

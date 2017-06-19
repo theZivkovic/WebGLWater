@@ -1,31 +1,26 @@
 import {loadCubeMap} from './TextureSources';
 import CubeMesh from './CubeMesh';
-import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 import {GL} from './GL';
 
 class Skybox {
 
 	constructor(cubeMapID){
 		this._cubeMapTextures = loadCubeMap(cubeMapID);
-		this._mesh = new CubeMesh(GLMATRIX.vec3.fromValues(0,0,0), 30);
-		console.log(this._cubeMapTextures);
+		this._cubeMapTextureID = null;
+		this.loadTextureCube(this._cubeMapTextures);
 	}
 
 	loadTextureCube(urls) {
 	    var ct = 0;
 	    var img = new Array(6);
-	    var urls = [
-	       "park/posx.jpg", "park/negx.jpg", 
-	       "park/posy.jpg", "park/negy.jpg", 
-	       "park/posz.jpg", "park/negz.jpg"
-	    ];
+	    let self = this;
 	    for (var i = 0; i < 6; i++) {
 	        img[i] = new Image();
 	        img[i].onload = function() {
 	            ct++;
 	            if (ct == 6) {
-	                texID = GL.createTexture();
-	                GL.bindTexture(GL.TEXTURE_CUBE_MAP, texID);
+	                self._cubeMapTextureID = GL.createTexture();
+	                GL.bindTexture(GL.TEXTURE_CUBE_MAP, self._cubeMapTextureID);
 	                var targets = [
 	                   GL.TEXTURE_CUBE_MAP_POSITIVE_X, GL.TEXTURE_CUBE_MAP_NEGATIVE_X, 
 	                   GL.TEXTURE_CUBE_MAP_POSITIVE_Y, GL.TEXTURE_CUBE_MAP_NEGATIVE_Y, 
@@ -44,8 +39,9 @@ class Skybox {
 	}
 
 	render(programID) {
+		GL.activeTexture(GL.TEXTURE_CUBE_MAP);
+		GL.bindTexture(GL.TEXTURE_CUBE_MAP, this._cubeMapTextureID);
 		GL.uniform1i(GL.getUniformLocation(programID, "skybox"), 0);
-		this._mesh.mesh.render(programID);
 	}
 
 }
