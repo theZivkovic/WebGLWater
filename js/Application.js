@@ -5,8 +5,9 @@ import {GL, initializeWebGL} from './GL';
 import Texture from './Texture';
 import PlaneMesh from './PlaneMesh';
 import Camera from './Camera';
-import EnvironmentRenderer from './EnvironmentRenderer';
+import ColoredCubesRenderer from './ColoredCubesRenderer';
 import SkyboxRenderer from './SkyboxRenderer';
+import PoolSidesRenderer from './PoolSidesRenderer';
 
 class Application {
 
@@ -35,8 +36,9 @@ class Application {
 		//this.initializeTextureFramebuffer();
 		//this.initializeTextures();
 		this.initializeCamera();
-		this._environmentRenderer = new EnvironmentRenderer();
+		this._coloredCubesRenderer = new ColoredCubesRenderer();
 		this._skyboxRenderer = new SkyboxRenderer();
+		this._poolSidesRenderer = new PoolSidesRenderer();
 
 		this.fireRenderLoop();
 	}
@@ -133,13 +135,14 @@ class Application {
 		let render = () => {
 
 			 GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-			 this._environmentRenderer.preRender(this._camera);
-			 this._environmentRenderer.render();
+
+			 this._coloredCubesRenderer.preRender(this._camera);
+			 this._coloredCubesRenderer.render();
 			 this._skyboxRenderer.preRender(this._camera);
 			 this._skyboxRenderer.render();
+			 this._poolSidesRenderer.preRender(this._camera);
+			 this._poolSidesRenderer.render();
 			 
-			// this._cameraGroundAngle += 0.01;
-			
 			// GL.useProgram(this._firstPassProgram.id);
 			// GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
 			// this.renderFirstPass(this._firstPassProgram.id);

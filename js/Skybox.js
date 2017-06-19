@@ -39,7 +39,6 @@ class Skybox {
 	}
 
 	render(programID) {
-		GL.activeTexture(GL.TEXTURE_CUBE_MAP);
 		GL.bindTexture(GL.TEXTURE_CUBE_MAP, this._cubeMapTextureID);
 		GL.uniform1i(GL.getUniformLocation(programID, "skybox"), 0);
 	}

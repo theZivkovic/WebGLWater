@@ -4,7 +4,7 @@ import CubeMesh from './CubeMesh';
 import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
 import {GL} from './GL'
 
-class EnvironmentRenderer extends Program {
+class ColoredCubesRenderer extends Program {
 
 	constructor() {
 		super();
@@ -12,20 +12,20 @@ class EnvironmentRenderer extends Program {
 	}
 
 	initialize() { 
-		this.addShaderDuo("environmentShader");
+		this.addShaderDuo("coloredCubesShader");
 		this.enableVertexPositionAttribute();
 		this.enableVertexColorAttribute();
 
-		this._cube1 = new CubeMesh(GLMATRIX.vec3.fromValues(-20, 0, -20), 2);
+		this._cube1 = new CubeMesh(GLMATRIX.vec3.fromValues(-30, 0, -30), 2);
 		this._cube1.setColor(GLMATRIX.vec3.fromValues(1, 0, 0));
 
-		this._cube2 = new CubeMesh(GLMATRIX.vec3.fromValues(-20, 0, 20), 2);
+		this._cube2 = new CubeMesh(GLMATRIX.vec3.fromValues(-30, 0, 30), 2);
 		this._cube2.setColor(GLMATRIX.vec3.fromValues(1, 1, 0));
 
-		this._cube3 = new CubeMesh(GLMATRIX.vec3.fromValues(20, 0, -20), 2);
+		this._cube3 = new CubeMesh(GLMATRIX.vec3.fromValues(30, 0, -30), 2);
 		this._cube3.setColor(GLMATRIX.vec3.fromValues(0, 1, 1));
 
-		this._cube4 = new CubeMesh(GLMATRIX.vec3.fromValues(20, 0, 20), 2);
+		this._cube4 = new CubeMesh(GLMATRIX.vec3.fromValues(30, 0, 30), 2);
 		this._cube4.setColor(GLMATRIX.vec3.fromValues(1, 0, 1));
 	}
 
@@ -42,4 +42,4 @@ class EnvironmentRenderer extends Program {
 	}
 }
 
-export default EnvironmentRenderer;
+export default ColoredCubesRenderer;
