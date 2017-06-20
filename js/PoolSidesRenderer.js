@@ -6,7 +6,7 @@ import {GL} from './GL';
 
 class PoolSidesRenderer extends Program {
 
-	constructor(){
+	constructor() {
 		
 		super();
 		

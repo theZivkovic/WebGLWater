@@ -9,6 +9,8 @@ shaderSources.skyboxShaderVertexSource = require('../assets/shaders/skyboxShader
 shaderSources.skyboxShaderFragmentSource = require('../assets/shaders/skyboxShaderFSH.glsl');
 shaderSources.poolSidesShaderVertexSource = require('../assets/shaders/poolSidesVSH.glsl');
 shaderSources.poolSidesShaderFragmentSource = require('../assets/shaders/poolSidesFSH.glsl');
+shaderSources.waterShaderVertexSource = require('../assets/shaders/waterVSH.glsl');
+shaderSources.waterShaderFragmentSource = require('../assets/shaders/waterFSH.glsl');
 
 let capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);

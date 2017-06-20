@@ -8,6 +8,7 @@ import Camera from './Camera';
 import ColoredCubesRenderer from './ColoredCubesRenderer';
 import SkyboxRenderer from './SkyboxRenderer';
 import PoolSidesRenderer from './PoolSidesRenderer';
+import ReflectionRenderer from './ReflectionRenderer';
 
 class Application {
 
@@ -15,16 +16,6 @@ class Application {
 		console.log("Application started!");
 		this._renderCanvas = renderCanvas;
 		this._camera = null;
-		this._firstPassProgram = null;
-		this._secondPassProgram = null;
-		this._poolSides = [];
-		this._dudvMapTexture = null;
-		this._mainTexture = null;
-		this._moveFactor = 0;
-		this._firstPassFramebuffer = null;
-		this._secondPassRenderPlane = null;
-		this._firstPassRenderTexture = null;
-		this._cameraGroundAngle = 0.0;
 		this.initialize();
 	}
 
@@ -35,6 +26,7 @@ class Application {
 		this._coloredCubesRenderer = new ColoredCubesRenderer();
 		this._skyboxRenderer = new SkyboxRenderer();
 		this._poolSidesRenderer = new PoolSidesRenderer();
+		this._reflectionRenderer = new ReflectionRenderer();
 
 		this.fireRenderLoop();
 	}
@@ -85,16 +77,16 @@ class Application {
 		let render = () => {
 
 			 GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-
 			 this._coloredCubesRenderer.preRender(this._camera);
 			 this._coloredCubesRenderer.render();
 			 this._skyboxRenderer.preRender(this._camera);
 			 this._skyboxRenderer.render();
 			 this._poolSidesRenderer.preRender(this._camera);
 			 this._poolSidesRenderer.render();
+			 this._reflectionRenderer.render(this._camera);
 		  	 requestAnimationFrame(render);
 		}
-		
+
 		requestAnimationFrame(render);
 	}
 
