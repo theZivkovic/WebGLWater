@@ -5,8 +5,9 @@ import PoolSidesRenderer from './PoolSidesRenderer';
 import Program from './Program';
 import PlaneMesh from './PlaneMesh';
 import GLMATRIX from '../bower_components/gl-matrix/dist/gl-matrix';
+import Texture from './Texture';
 
-class ReflectionRenderer extends Program {
+class WaterRenderer extends Program {
 
 	constructor() {
 		super();
@@ -17,6 +18,9 @@ class ReflectionRenderer extends Program {
 		let refractionFrameBufferResult = this.setupFramebuffer();
 		this._refractionFramebuffer = refractionFrameBufferResult.framebuffer;
 		this._refractionTexture = refractionFrameBufferResult.renderTexture;
+		this._dudvMap = new Texture("waterDUDVMap", 2);
+
+		this._waterMoveFactor = 0.0;
 	}
 
 	initialize() {
@@ -72,6 +76,9 @@ class ReflectionRenderer extends Program {
 
 	render(camera) {
 		
+		this._waterMoveFactor += 0.0005;
+		this._waterMoveFactor %= 1;
+
 		GL.bindFramebuffer(GL.FRAMEBUFFER, this._reflectionFramebuffer);
 			GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 			camera.invertTheta();
@@ -96,7 +103,6 @@ class ReflectionRenderer extends Program {
 
 		GL.useProgram(this.id);
 		camera.render(this.id);
-		
 		GL.activeTexture(GL.TEXTURE0);
 		GL.bindTexture(GL.TEXTURE_2D, this._reflectionTexture);
 		GL.uniform1i(GL.getUniformLocation(this.id, "reflectionTexture"), 0);
@@ -105,11 +111,10 @@ class ReflectionRenderer extends Program {
 		GL.bindTexture(GL.TEXTURE_2D, this._refractionTexture);
 		GL.uniform1i(GL.getUniformLocation(this.id, "refractionTexture"), 1);
 
+		GL.uniform1f(GL.getUniformLocation(this.id, "waterMoveFactor"), this._waterMoveFactor);
+		this._dudvMap.render(this.id);
 		this._waterPlane.render(this.id);
 	}
-
-
-
 }
 
-export default ReflectionRenderer;
+export default WaterRenderer;

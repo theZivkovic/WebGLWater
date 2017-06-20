@@ -5,9 +5,11 @@ uniform mat4 P;
 uniform mat4 V;
 uniform mat4 M;
 
-varying vec2 vTextureCoord;
+varying vec4 waterCoordinates;
+
 
 void main(void){
-	vTextureCoord = aTextureCoord;
-	gl_Position = P * V * M * vec4(aVertexPosition, 1.0);
+
+	waterCoordinates = P * V * M * vec4(aVertexPosition, 1.0);
+	gl_Position = waterCoordinates;
 }

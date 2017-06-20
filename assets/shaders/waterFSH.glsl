@@ -2,12 +2,21 @@ precision mediump float;
 
 uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
+uniform sampler2D waterDUDVMap;
+uniform float waterMoveFactor;
 
-varying vec2 vTextureCoord;
+varying vec4 waterCoordinates;
 
+float waveStrength = 0.1;
 void main(void){
 
-	vec4 reflectionColor = texture2D(reflectionTexture, vTextureCoord);
-	vec4 refractionColor = texture2D(refractionTexture, vTextureCoord);
+	vec2 waterCoords = (waterCoordinates.xy / waterCoordinates.w) / 2.0 + 0.5;
+	vec2 waterHorizontalDistortion = (texture2D(waterDUDVMap, vec2(waterCoords.x + waterMoveFactor, waterCoords.y)).rg * 2.0 - 1.0) * waveStrength;
+	vec2 waterDiagonalDistortion = (texture2D(waterDUDVMap, vec2(waterCoords.x + waterMoveFactor, waterCoords.y + waterMoveFactor)).rg * 2.0 - 1.0) * waveStrength;
+
+	vec2 totalWaterDistortion = waterHorizontalDistortion + waterDiagonalDistortion;
+
+	vec4 reflectionColor = texture2D(reflectionTexture, waterCoords + totalWaterDistortion);
+	vec4 refractionColor = texture2D(refractionTexture, waterCoords + totalWaterDistortion);
 	gl_FragColor = mix(reflectionColor, refractionColor, 0.5);
 }

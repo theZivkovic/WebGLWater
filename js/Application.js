@@ -8,7 +8,7 @@ import Camera from './Camera';
 import ColoredCubesRenderer from './ColoredCubesRenderer';
 import SkyboxRenderer from './SkyboxRenderer';
 import PoolSidesRenderer from './PoolSidesRenderer';
-import ReflectionRenderer from './ReflectionRenderer';
+import WaterRenderer from './WaterRenderer';
 
 class Application {
 
@@ -26,7 +26,7 @@ class Application {
 		this._coloredCubesRenderer = new ColoredCubesRenderer();
 		this._skyboxRenderer = new SkyboxRenderer();
 		this._poolSidesRenderer = new PoolSidesRenderer();
-		this._reflectionRenderer = new ReflectionRenderer();
+		this._waterRenderer = new WaterRenderer();
 
 		this.fireRenderLoop();
 	}
@@ -39,33 +39,6 @@ class Application {
 		GL.enable(GL.CULL_FACE);
 		GL.cullFace(GL.FRONT);
 	}
-
-	// initializeTextureFramebuffer() {
-
-	// 	this._firstPassFramebuffer = GL.createFramebuffer();
-	// 	GL.bindFramebuffer(GL.FRAMEBUFFER, this._firstPassFramebuffer);
-	// 	this._firstPassFramebuffer.width = 512;
-	// 	this._firstPassFramebuffer.height = 512;
-
-	// 	this._firstPassRenderTexture = GL.createTexture();
-	// 	GL.bindTexture(GL.TEXTURE_2D, this._firstPassRenderTexture);
-	// 	GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, this._firstPassFramebuffer.width, this._firstPassFramebuffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
-	// 	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
- //    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
- //    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
- //    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-
-	// 	let depthBuffer = GL.createRenderbuffer();
-	// 	GL.bindRenderbuffer(GL.RENDERBUFFER, depthBuffer);
-	// 	GL.renderbufferStorage(GL.RENDERBUFFER, GL.DEPTH_COMPONENT16, this._firstPassFramebuffer.width, this._firstPassFramebuffer.height);
-
-	// 	GL.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, this._firstPassRenderTexture, 0);
-	// 	GL.framebufferRenderbuffer(GL.FRAMEBUFFER, GL.DEPTH_ATTACHMENT, GL.RENDERBUFFER, depthBuffer);
-
-	// 	GL.bindTexture(GL.TEXTURE_2D, null);
- //    	GL.bindRenderbuffer(GL.RENDERBUFFER, null);
- //    	GL.bindFramebuffer(GL.FRAMEBUFFER, null);
-	// }
 
 	initializeCamera() {
 		this._camera = new Camera(0, 0, 100);
@@ -83,7 +56,7 @@ class Application {
 			 this._skyboxRenderer.render();
 			 this._poolSidesRenderer.preRender(this._camera);
 			 this._poolSidesRenderer.render();
-			 this._reflectionRenderer.render(this._camera);
+			 this._waterRenderer.render(this._camera);
 		  	 requestAnimationFrame(render);
 		}
 
