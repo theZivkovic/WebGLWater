@@ -47,8 +47,8 @@ class WaterRenderer extends Program {
 
 		let framebuffer = GL.createFramebuffer();
 		GL.bindFramebuffer(GL.FRAMEBUFFER, framebuffer);
-		framebuffer.width = 512;
-		framebuffer.height = 512;
+		framebuffer.width = 1024;
+		framebuffer.height = 768;
 
 		let renderTexture = GL.createTexture();
 		GL.bindTexture(GL.TEXTURE_2D, renderTexture);
@@ -86,17 +86,17 @@ class WaterRenderer extends Program {
 			this._coloredCubesRenderer.render();
 			this._skyboxRenderer.preRender(camera);
 			this._skyboxRenderer.render();
-			// this._poolSidesRenderer.preRender(camera);
-			// this._poolSidesRenderer.render();
+			this._poolSidesRenderer.preRender(camera);
+			this._poolSidesRenderer.render();
 		GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 
 		GL.bindFramebuffer(GL.FRAMEBUFFER, this._refractionFramebuffer);
 			GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 			camera.invertTheta();
-			// this._coloredCubesRenderer.preRender(camera);
-			// this._coloredCubesRenderer.render();
-			// this._skyboxRenderer.preRender(camera);
-			// this._skyboxRenderer.render();
+			//this._coloredCubesRenderer.preRender(camera);
+			//this._coloredCubesRenderer.render();
+			//this._skyboxRenderer.preRender(camera);
+			//this._skyboxRenderer.render();
 			this._poolSidesRenderer.preRender(camera);
 			this._poolSidesRenderer.render();
 		GL.bindFramebuffer(GL.FRAMEBUFFER, null);
