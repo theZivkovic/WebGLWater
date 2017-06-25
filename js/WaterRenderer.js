@@ -18,8 +18,7 @@ class WaterRenderer extends Program {
 		let refractionFrameBufferResult = this.setupFramebuffer();
 		this._refractionFramebuffer = refractionFrameBufferResult.framebuffer;
 		this._refractionTexture = refractionFrameBufferResult.renderTexture;
-		this._dudvMap = new Texture("waterDUDVMap", 2);
-
+		this._dudvMap = new Texture("waterDUDVMap", 2);	
 		this._waterMoveFactor = 0.0;
 	}
 
@@ -86,8 +85,8 @@ class WaterRenderer extends Program {
 			this._coloredCubesRenderer.render();
 			this._skyboxRenderer.preRender(camera);
 			this._skyboxRenderer.render();
-			this._poolSidesRenderer.preRender(camera);
-			this._poolSidesRenderer.render();
+			//this._poolSidesRenderer.preRender(camera);
+			//this._poolSidesRenderer.render();
 		GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 
 		GL.bindFramebuffer(GL.FRAMEBUFFER, this._refractionFramebuffer);
@@ -112,6 +111,12 @@ class WaterRenderer extends Program {
 		GL.uniform1i(GL.getUniformLocation(this.id, "refractionTexture"), 1);
 
 		GL.uniform1f(GL.getUniformLocation(this.id, "waterMoveFactor"), this._waterMoveFactor);
+
+		let cameraToWaterAngle = GLMATRIX.vec3.dot(GLMATRIX.vec3.fromValues(0, 1, 0), camera.calculatePosition());
+		let absCameraToWaterAngle = Math.abs(cameraToWaterAngle);
+		let relectionRefractionFactor = absCameraToWaterAngle / 90.0;
+		
+		GL.uniform1f(GL.getUniformLocation(this.id, "relectionRefractionFactor"), relectionRefractionFactor);
 		this._dudvMap.render(this.id);
 		this._waterPlane.render(this.id);
 	}
