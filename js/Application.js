@@ -26,7 +26,7 @@ class Application {
 		this._coloredCubesRenderer = new ColoredCubesRenderer();
 		this._skyboxRenderer = new SkyboxRenderer();
 		this._poolSidesRenderer = new PoolSidesRenderer();
-		this._waterRenderer = new WaterRenderer();
+		this._waterRenderer = new WaterRenderer(this._renderCanvas.clientWidth, this._renderCanvas.clientHeight);
 
 		this.fireRenderLoop();
 	}
@@ -45,10 +45,23 @@ class Application {
 		this._camera.setSourceOfInteraction(this._renderCanvas);
 	}
 
+	resize(canvas) {
+	  var displayWidth  = canvas.clientWidth;
+	  var displayHeight = canvas.clientHeight;
+	 
+	  if (canvas.width  != displayWidth ||
+	      canvas.height != displayHeight) {
+	 
+	    canvas.width  = displayWidth;
+	    canvas.height = displayHeight;
+	  }
+	}
+
 	fireRenderLoop(){
 
 		let render = () => {
-
+			 this.resize(this._renderCanvas);
+			 GL.viewport(0, 0, this._renderCanvas.width, this._renderCanvas.height);
 			 GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 			 this._coloredCubesRenderer.preRender(this._camera);
 			 this._coloredCubesRenderer.render();

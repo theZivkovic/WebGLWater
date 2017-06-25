@@ -9,16 +9,19 @@ import Texture from './Texture';
 
 class WaterRenderer extends Program {
 
-	constructor() {
+	constructor(canvasWidth, canvasHeight) {
 		super();
 		this.initialize();
+		this._canvasWidth = canvasWidth;
+		this._canvasHeight = canvasHeight;
 		let reflectionFrameBufferResult = this.setupFramebuffer();
 		this._reflectionFramebuffer = reflectionFrameBufferResult.framebuffer;
 		this._reflectionTexture = reflectionFrameBufferResult.renderTexture;
 		let refractionFrameBufferResult = this.setupFramebuffer();
 		this._refractionFramebuffer = refractionFrameBufferResult.framebuffer;
 		this._refractionTexture = refractionFrameBufferResult.renderTexture;
-		this._dudvMap = new Texture("waterDUDVMap", 2);	
+		this._dudvMap = new Texture("waterDUDVMap", 2);
+		this._waterNormalMap = new Texture("waterNormalMap", 3);	
 		this._waterMoveFactor = 0.0;
 	}
 
@@ -46,8 +49,8 @@ class WaterRenderer extends Program {
 
 		let framebuffer = GL.createFramebuffer();
 		GL.bindFramebuffer(GL.FRAMEBUFFER, framebuffer);
-		framebuffer.width = 1024;
-		framebuffer.height = 768;
+		framebuffer.width = this._canvasWidth;
+		framebuffer.height = this._canvasHeight;
 
 		let renderTexture = GL.createTexture();
 		GL.bindTexture(GL.TEXTURE_2D, renderTexture);
@@ -119,6 +122,7 @@ class WaterRenderer extends Program {
 		GL.uniform1f(GL.getUniformLocation(this.id, "relectionRefractionFactor"), relectionRefractionFactor);
 		this._dudvMap.render(this.id);
 		this._waterPlane.render(this.id);
+		this._waterNormalMap.render(this.id);
 	}
 }
 
