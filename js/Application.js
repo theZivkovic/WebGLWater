@@ -41,7 +41,7 @@ class Application {
 	}
 
 	initializeCamera() {
-		this._camera = new Camera(0, 0, 100);
+		this._camera = new Camera(0, Math.PI / 8.0, 40);
 		this._camera.setSourceOfInteraction(this._renderCanvas);
 	}
 

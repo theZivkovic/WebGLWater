@@ -1,21 +1,32 @@
  /* remove the border */
 body {
 	border: 0;
+	margin: 0;
 	background-color: white;
-	width: 800px;
-	height: 600px;
-	margin-left: auto;
-	margin-right: auto;
+	width: 100%;
+	height: 100%;
 	background-color: black;
 	overflow: hidden;
 }
+
 /* make the canvas the size of the viewport */
 #glCanvas {
 	width: 100%;
 	height: 100%;
 	display: block;
+	position: absolute;
 }
 
-h1 {
-	color: white;
+#info {
+	position: absolute;
+	z-index: 2;
+	left: 10px;
+	top: 10px;
+	border: 2px solid black;
+	background-color: rgba(255, 255, 255, 0.5);
+	font-family: 'Roboto', sans-serif;
+}
+
+#content {
+	padding: 20px;
 }

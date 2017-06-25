@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
-	  <h1>Water rendering</h1>
 	  <canvas id="glCanvas">
 		Your browser doesn't appear to support the 
 		<code>&lt;canvas&gt;</code> element.
 	  </canvas>
+	  <div id="info">
+	  	<div id="content">
+		  	<h1>WebGL water</h1>
+		  	<ul> Instructions:
+		  		<li>Left mouse click&drag - Rotate</li>
+		  		<li>Arrows up/down - Zoom
+		  	</ul>
+		  	<p>Full code at:<br><a href="https://github.com/theZivkovic/WebGLWater">https://github.com/theZivkovic/WebGLWater</a></p>
+	  	</div>
+	  </div>
 	  <script src="bundle.js"></script>
 	</body>
 </html>
