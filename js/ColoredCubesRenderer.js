@@ -16,19 +16,19 @@ class ColoredCubesRenderer extends Program {
 		this.enableVertexPositionAttribute();
 		this.enableVertexColorAttribute();
 
-		this._cube1 = new CubeMesh(GLMATRIX.vec3.fromValues(-30, 10, -30), 2);
+		this._cube1 = new CubeMesh(GLMATRIX.vec3.fromValues(-30, 5, -30), 2);
 		this._cube1.setColor(GLMATRIX.vec3.fromValues(1, 0, 0));
 
-		this._cube2 = new CubeMesh(GLMATRIX.vec3.fromValues(-30, 10, 30), 2);
+		this._cube2 = new CubeMesh(GLMATRIX.vec3.fromValues(-30, 5, 30), 2);
 		this._cube2.setColor(GLMATRIX.vec3.fromValues(1, 1, 0));
 
-		this._cube3 = new CubeMesh(GLMATRIX.vec3.fromValues(30, 10, -30), 2);
+		this._cube3 = new CubeMesh(GLMATRIX.vec3.fromValues(30, 5, -30), 2);
 		this._cube3.setColor(GLMATRIX.vec3.fromValues(0, 1, 1));
 
-		this._cube4 = new CubeMesh(GLMATRIX.vec3.fromValues(30, 10, 30), 2);
+		this._cube4 = new CubeMesh(GLMATRIX.vec3.fromValues(30, 5, 30), 2);
 		this._cube4.setColor(GLMATRIX.vec3.fromValues(1, 0, 1));
 
-		this._cube5 = new CubeMesh(GLMATRIX.vec3.fromValues(0, 10, 0), 2);
+		this._cube5 = new CubeMesh(GLMATRIX.vec3.fromValues(0, 20, 0), 5);
 		this._cube5.setColor(GLMATRIX.vec3.fromValues(0, 1, 0));
 	}
 

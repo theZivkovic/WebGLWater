@@ -95,8 +95,8 @@ class WaterRenderer extends Program {
 		GL.bindFramebuffer(GL.FRAMEBUFFER, this._refractionFramebuffer);
 			GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 			camera.invertTheta();
-			//this._coloredCubesRenderer.preRender(camera);
-			//this._coloredCubesRenderer.render();
+			this._coloredCubesRenderer.preRender(camera);
+			this._coloredCubesRenderer.render();
 			//this._skyboxRenderer.preRender(camera);
 			//this._skyboxRenderer.render();
 			this._poolSidesRenderer.preRender(camera);
