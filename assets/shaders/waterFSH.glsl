@@ -33,10 +33,16 @@ void main(void)
 	vec4 reflectionAndRefractionColor = mix(reflectionColor, refractionColor, relectionRefractionFactor);
 
 	// normal map calculations
-	vec3 normalVector = (texture2D(waterNormalMap, distortedCoords) * 2.0 - 1.0).rgb;
-	vec3 reflectionVector = normalVector * dot(normalVector, lightVector) * 2.0 - lightVector;
-	float specularFactor = pow(max(0.0, dot(reflectionVector, cameraVector)), 3.0);
 
-	//gl_FragColor = reflectionAndRefractionColor;
+	vec3 normalVector = (texture2D(waterNormalMap, distortedCoords) * 2.0 - 1.0).rgb;
+
+	float diffuseFactor = max(0.0, dot(normalVector, lightVector));
+	float specularFactor = 0.0;
+	if (diffuseFactor > 0.0)
+	{	
+		vec3 reflectionVector = reflect(-lightVector, normalVector);//normalVector * dot(normalVector, lightVector) * 2.0 - lightVector;
+		specularFactor = pow(max(0.0, dot(reflectionVector, cameraVector)), 3.0);
+	}
+
 	gl_FragColor = reflectionAndRefractionColor * (1.0 + specularFactor);
 }

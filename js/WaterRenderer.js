@@ -122,7 +122,7 @@ class WaterRenderer extends Program {
 		let relectionRefractionFactor = absCameraToWaterAngle;
 
 		GL.uniform3fv(GL.getUniformLocation(this.id, "cameraPosition"), camera.calculatePosition());
-		GL.uniform3fv(GL.getUniformLocation(this.id, "lightPosition"), GLMATRIX.vec3.fromValues(-50, 50, 0));
+		GL.uniform3fv(GL.getUniformLocation(this.id, "lightPosition"), GLMATRIX.vec3.fromValues(0, 50, 50));
 
 		GL.uniform1f(GL.getUniformLocation(this.id, "relectionRefractionFactor"), relectionRefractionFactor);
 		this._dudvMap.render(this.id);
