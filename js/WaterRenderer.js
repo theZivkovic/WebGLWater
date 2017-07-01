@@ -115,9 +115,11 @@ class WaterRenderer extends Program {
 
 		GL.uniform1f(GL.getUniformLocation(this.id, "waterMoveFactor"), this._waterMoveFactor);
 
-		let cameraToWaterAngle = GLMATRIX.vec3.dot(GLMATRIX.vec3.fromValues(0, 1, 0), camera.calculatePosition());
+		let normalizedCameraVector = GLMATRIX.vec3.fromValues(0,0,0);
+		GLMATRIX.vec3.normalize(normalizedCameraVector, camera.calculatePosition())
+		let cameraToWaterAngle = GLMATRIX.vec3.dot(GLMATRIX.vec3.fromValues(0, 1, 0), normalizedCameraVector);
 		let absCameraToWaterAngle = Math.abs(cameraToWaterAngle);
-		let relectionRefractionFactor = absCameraToWaterAngle / 90.0;
+		let relectionRefractionFactor = absCameraToWaterAngle;
 
 		GL.uniform3fv(GL.getUniformLocation(this.id, "cameraPosition"), camera.calculatePosition());
 		GL.uniform3fv(GL.getUniformLocation(this.id, "lightPosition"), GLMATRIX.vec3.fromValues(-50, 50, 0));
